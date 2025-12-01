@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiZip - Best Image Compression</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='optizip-favicon-style.png') }}">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sunny: '#fbbf24',
+                        darkyellow: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .animate-shrink {
+            animation: shrink 4s linear forwards;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <div class="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-gray-50 relative overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-sunny/10 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-darkyellow/10 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="relative z-10 container mx-auto px-6 py-6">
+            <div class="flex justify-between items-center backdrop-blur-xl bg-white/80 px-6 py-4 rounded-2xl shadow-xl border border-white/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-sunny to-darkyellow rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-bolt text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-black text-gray-800">OptiZip</h1>
+                </div>
+                <button onclick="window.location.href='/login'" class="bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Get Started
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 container mx-auto px-6 py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-6xl font-black text-gray-800 mb-6 leading-tight">
+                    Compress Images<br>
+                    <span class="gradient-text">Without Losing Quality</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                    Transform your images with AI-powered compression. Save bandwidth, boost speed, and maintain stunning quality.
+                </p>
+                
+                <!-- Feature Pills -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12">
+                    <div class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-gray-700 shadow-lg border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Free Compression
+                    </div>
+                    <div class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-gray-700 shadow-lg border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Up to 90% Size Reduction
+                    </div>
+                    <div class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-gray-700 shadow-lg border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>WebP Format
+                    </div>
+                    <div class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-gray-700 shadow-lg border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>WordPress Plugin
+                    </div>
+                </div>
+            </div>
+
+            <!-- Free Compression Tool -->
+            <div class="max-w-4xl mx-auto mb-16">
+                <div class="backdrop-blur-xl bg-white/90 rounded-2xl shadow-2xl border border-white/50 overflow-hidden">
+                    <div class="bg-gradient-to-r from-sunny to-darkyellow p-6">
+                        <h3 class="text-2xl font-black text-white text-center flex items-center justify-center gap-3">
+                            <i class="fas fa-gift"></i>
+                            Try It Free - Compress Now!
+                        </h3>
+                        <p class="text-white/90 text-center mt-2">No login required for your first images</p>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="p-8">
+                        <div id="uploadArea" class="relative bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-sunny hover:bg-yellow-50/50 transition-all duration-300 group">
+                            <div class="relative z-10">
+                                <div class="relative inline-block mb-4">
+                                    <i class="fas fa-cloud-upload-alt text-6xl text-sunny group-hover:scale-110 transition-transform duration-300"></i>
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Drag & Drop Images Here</h3>
+                                <p class="text-sm text-gray-500 mb-6">or click to select <span class="text-sunny font-bold">(100% Free, No Limits!)</span></p>
+                                
+                                <input type="file" multiple accept="image/*" id="imageInput" class="hidden">
+                                
+                                <button class="bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105">
+                                    <i class="fas fa-images mr-2"></i>
+                                    Select Images
+                                </button>
+
+                                <div class="flex justify-center gap-3 mt-6">
+                                    <div class="px-3 py-2 bg-white rounded-lg text-xs font-semibold text-gray-600 border border-gray-200 shadow-sm">
+                                        <i class="fas fa-check-circle text-green-500 mr-1"></i>JPG, PNG, WebP
+                                    </div>
+                                    <div class="px-3 py-2 bg-white rounded-lg text-xs font-semibold text-gray-600 border border-gray-200 shadow-sm">
+                                        <i class="fas fa-check-circle text-green-500 mr-1"></i>Smart AI Compression
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress -->
+                        <div id="progress" class="hidden text-center py-12">
+                            <div class="relative inline-block">
+                                <div class="absolute inset-0 bg-sunny/20 rounded-full blur-xl animate-pulse"></div>
+                                <div class="relative inline-block animate-spin rounded-full h-20 w-20 border-4 border-gray-200">
+                                    <div class="absolute inset-0 rounded-full border-4 border-t-sunny border-r-darkyellow border-b-transparent border-l-transparent"></div>
+                                </div>
+                            </div>
+                            <p class="mt-6 text-xl font-black text-gray-800">Optimizing your images...</p>
+                            <p class="mt-2 text-sm text-gray-500 font-medium animate-pulse">Please wait while we work our magic ✨</p>
+                        </div>
+
+                        <!-- Results -->
+                        <div id="results" class="mt-8 space-y-6"></div>
+                    </div>
+                </div>
+
+                <!-- CTA after free try -->
+                <div class="text-center mt-8">
+                    <p class="text-gray-600 mb-4">Want to compress more images?</p>
+                    <button onclick="window.location.href='/login'" class="bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-rocket mr-2"></i>Sign Up for Unlimited Compression
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-5xl font-black text-center text-gray-800 mb-4">
+                Why Choose <span class="gradient-text">OptiZip</span>?
+            </h2>
+            <p class="text-center text-gray-600 mb-16 text-lg">Powerful features that make image optimization effortless</p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group backdrop-blur-xl bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sunny to-darkyellow rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-bolt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-4">Lightning Fast</h3>
+                    <p class="text-gray-600 leading-relaxed">Process multiple images in seconds with our optimized compression engine. Save time and bandwidth effortlessly.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group backdrop-blur-xl bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sunny to-darkyellow rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-eye text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-4">Quality Preserved</h3>
+                    <p class="text-gray-600 leading-relaxed">Advanced algorithms ensure your images look stunning while reducing file size by up to 90%.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group backdrop-blur-xl bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-sunny to-darkyellow rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-gray-800 mb-4">Secure & Private</h3>
+                    <p class="text-gray-600 leading-relaxed">Your images are processed securely and deleted immediately after compression. Your privacy is our priority.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WordPress Plugin Section -->
+    <div class="py-20 bg-gradient-to-br from-gray-900 to-gray-800 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sunny to-darkyellow"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="inline-block mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-br from-sunny to-darkyellow rounded-2xl flex items-center justify-center shadow-2xl">
+                        <i class="fab fa-wordpress text-white text-3xl"></i>
+                    </div>
+                </div>
+                
+                <h2 class="text-5xl font-black mb-6">WordPress Plugin Available</h2>
+                <p class="text-xl text-gray-300 mb-8 leading-relaxed">Automatically optimize all images on your WordPress site. One-click installation, zero configuration needed.</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-10">
+                    <div class="backdrop-blur-xl bg-white/10 p-6 rounded-xl border border-white/20">
+                        <i class="fas fa-download text-sunny text-3xl mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Auto-Optimization</h4>
+                        <p class="text-gray-300 text-sm">Automatically compress images on upload</p>
+                    </div>
+                    <div class="backdrop-blur-xl bg-white/10 p-6 rounded-xl border border-white/20">
+                        <i class="fas fa-images text-sunny text-3xl mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Bulk Processing</h4>
+                        <p class="text-gray-300 text-sm">Optimize your entire media library at once</p>
+                    </div>
+                    <div class="backdrop-blur-xl bg-white/10 p-6 rounded-xl border border-white/20">
+                        <i class="fas fa-tachometer-alt text-sunny text-3xl mb-4"></i>
+                        <h4 class="font-bold text-lg mb-2">Faster Loading</h4>
+                        <p class="text-gray-300 text-sm">Improve site speed and SEO rankings</p>
+                    </div>
+                </div>
+
+                <button class="bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-gray-900 font-black px-10 py-5 rounded-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-105 text-lg">
+                    <i class="fas fa-plug mr-2"></i>Download WordPress Plugin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="py-20 bg-gradient-to-br from-sunny/10 to-darkyellow/10">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-5xl font-black gradient-text mb-2">10M+</div>
+                    <p class="text-gray-600 font-semibold">Images Optimized</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-black gradient-text mb-2">90%</div>
+                    <p class="text-gray-600 font-semibold">Average Size Reduction</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-black gradient-text mb-2">50K+</div>
+                    <p class="text-gray-600 font-semibold">Happy Users</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-5xl font-black gradient-text mb-2">24/7</div>
+                    <p class="text-gray-600 font-semibold">Support Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="py-20 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-5xl font-black text-gray-800 mb-6">Ready to Optimize?</h2>
+            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">Join thousands of users who trust OptiZip for their image compression needs.</p>
+            <button onclick="window.location.href='/login'" class="bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-black px-12 py-6 rounded-xl transition-all duration-300 hover:shadow-2xl transform hover:scale-105 text-xl">
+                <i class="fas fa-rocket mr-3"></i>Get Started Free
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-sunny to-darkyellow rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bolt text-white"></i>
+                </div>
+                <h3 class="text-2xl font-black">OptiZip</h3>
+            </div>
+            <p class="text-gray-400 mb-6">Smart Image Compression Made Simple</p>
+            <div class="flex justify-center gap-6 mb-6">
+                <a href="#" class="text-gray-400 hover:text-sunny transition"><i class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-sunny transition"><i class="fab fa-facebook text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-sunny transition"><i class="fab fa-instagram text-xl"></i></a>
+            </div>
+            <p class="text-gray-500 text-sm">&copy; 2024 OptiZip. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-6 right-6 z-50 transform translate-x-full transition-all duration-500 ease-out';
+            
+            const bgGradient = type === 'success' 
+                ? 'from-green-500 to-emerald-600' 
+                : type === 'error' 
+                ? 'from-red-500 to-rose-600' 
+                : 'from-sunny to-darkyellow';
+
+            toast.innerHTML = `
+                <div class="backdrop-blur-xl bg-white/20 border border-white/30 rounded-2xl shadow-2xl p-5 min-w-80">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-br ${bgGradient} rounded-xl flex items-center justify-center shadow-lg">
+                            ${type === 'success' ? '<i class="fas fa-check text-white text-xl"></i>' : 
+                              type === 'error' ? '<i class="fas fa-times text-white text-xl"></i>' : 
+                              '<i class="fas fa-bolt text-white text-xl"></i>'}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-black font-bold text-lg">${message}</p>
+                            <p class="text-black/80 text-xs mt-1">OptiZip</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                class="text-black/70 hover:text-black transition">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="mt-3 h-1 bg-white/30 rounded-full overflow-hidden">
+                        <div class="h-full bg-white/80 rounded-full animate-shrink"></div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Upload & Drag Drop
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+
+        uploadArea.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        ['dragover', 'dragenter'].forEach(evt => {
+            uploadArea.addEventListener(evt, e => {
+                e.preventDefault();
+                uploadArea.classList.add('border-sunny', 'scale-105');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            uploadArea.addEventListener(evt, e => {
+                e.preventDefault();
+                uploadArea.classList.remove('border-sunny', 'scale-105');
+            });
+        });
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Real API call for compression (FREE - No login required)
+        async function handleFiles(files) {
+            if (!files.length) {
+                showToast('Please select at least one image', 'error');
+                return;
+            }
+
+            if (files.length > 10) {
+                showToast('Maximum 10 images at once', 'error');
+                return;
+            }
+
+            document.getElementById('progress').classList.remove('hidden');
+            uploadArea.style.display = 'none';
+
+            const formData = new FormData();
+            for (let file of files) formData.append('images', file);
+
+            try {
+                // Free route use karo - no login needed
+                const res = await fetch('/api/upload-free', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    displayResults(data.results, files);
+                    showToast(data.msg || 'Images optimized successfully!', 'success');
+                } else {
+                    showToast(data.msg || 'Upload failed', 'error');
+                }
+            } catch (err) {
+                showToast('Network error. Please try again.', 'error');
+            } finally {
+                document.getElementById('progress').classList.add('hidden');
+                uploadArea.style.display = 'block';
+            }
+        }
+
+        // Human readable size - MB, KB, B automatically
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+        function displayResults(results, originalFiles) {
+            const container = document.getElementById('results');
+            container.innerHTML = '';
+
+            results.forEach((r, index) => {
+                const originalFile = originalFiles[index];
+                const originalFileName = originalFile.name;
+                const nameWithoutExt = originalFileName.replace(/\.[^/.]+$/, "");
+                const extension = originalFileName.split('.').pop();
+                const downloadName = `${nameWithoutExt}_optizip.${extension}`;
+                
+const originalSize = formatBytes(r.original_size);
+const optimizedSize = formatBytes(r.optimized_size);
+                const card = document.createElement('div');
+                card.className = 'opacity-0 transform translate-y-8';
+                card.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                        
+                        <!-- Image Preview -->
+                        <div class="relative h-64 bg-gray-100 overflow-hidden">
+                            <img src="${r.preview}" class="absolute inset-0 w-full h-full object-contain">
+                            
+                            <!-- Corner Label -->
+                            <div class="absolute top-2 right-2 bg-green-600/80 text-white px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-sm">
+                                <i class="fas fa-check mr-1"></i>Optimized
+                            </div>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 gap-3 p-4 bg-gray-50">
+                            <div class="text-center p-2 bg-white rounded-lg border border-gray-200">
+                                <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Original</p>
+                                <p class="text-lg font-black text-gray-800">${originalSize}</p>
+                            </div>
+                            <div class="text-center p-2 bg-green-50 rounded-lg border border-green-200">
+                                <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Optimized</p>
+                                <p class="text-lg font-black text-green-600">${optimizedSize}</p>
+                            </div>
+                        </div>
+
+                        <!-- Savings Badge -->
+                        <div class="p-3 bg-gradient-to-r from-sunny via-yellow-400 to-darkyellow">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-white/30 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-piggy-bank text-white text-sm"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="text-white/80 text-xs font-bold uppercase tracking-wider">Saved</p>
+                                        <p class="text-white text-xl font-black">${r.reduction_percent}%</p>
+                                    </div>
+                                </div>
+                                <button onclick="downloadImageBase64('${r.preview}', '${downloadName}')"
+                                        class="bg-white hover:bg-gray-50 text-sunny font-bold text-xs px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
+                                    <i class="fas fa-download text-xs"></i>
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+
+                // Staggered animation
+                setTimeout(() => {
+                    card.style.transition = 'all 0.4s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 80);
+            });
+        }
+
+        // Download image from base64 (for free API)
+        function downloadImageBase64(base64Data, filename) {
+            try {
+                const a = document.createElement('a');
+                a.href = base64Data;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showToast(`Downloading ${filename}`, 'success');
+            } catch (err) {
+                console.error('Download error:', err);
+                showToast('Download failed', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

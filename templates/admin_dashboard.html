@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - OptiZip{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-white">
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-200 px-8 py-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-800">Admin Dashboard</h1>
+                <p class="text-gray-500 text-sm mt-1">Manage users and credits</p>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-500 text-xs uppercase tracking-wider">Total Users</p>
+                <p class="text-4xl font-bold text-yellow-600">{{ users|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-8 py-10">
+        <!-- Search -->
+        <div class="mb-8">
+            <input type="text" id="searchInput" placeholder="Search by name or email..."
+                   class="w-full px-5 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-yellow-500 transition">
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <table class="w-full" id="usersTable">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Credits</th>
+                        <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Joined</th>
+                        <th class="px-6 py-4 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for user in users %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ user.name }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{ user.email }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <form action="/admin-mamoon-only/update-credits/{{ user._id }}" method="POST" class="inline-flex items-center gap-3">
+                                <input type="number" name="credits" value="{{ user.credits }}" min="0"
+                                       class="w-24 px-3 py-2 border border-gray-300 rounded text-sm text-center focus:outline-none focus:border-yellow-500">
+                                <button class="bg-yellow-500 hover:bg-yellow-600 text-gray-800 font-medium px-4 py-2 rounded text-xs transition">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                        <td class="px-6 py-4 text-center text-xs text-gray-500">
+                            {% if user.created_at %}
+                                {{ user.created_at.strftime('%d %b %Y') }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <a href="/admin-mamoon-only/delete/{{ user._id }}"
+                               onclick="return confirm('Delete user {{ user.name }} permanently?')"
+                               class="text-red-600 hover:text-red-800 transition">
+                                <!-- Delete Icon (Trash) -->
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Empty State -->
+            {% if users|length == 0 %}
+            <div class="text-center py-16 text-gray-500">
+                <p class="text-lg">No users found</p>
+                <p class="text-sm mt-2">Users will appear here after registration</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Search Script -->
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#usersTable tbody tr');
+        rows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            const email = row.cells[1].textContent.toLowerCase();
+            row.style.display = (name.includes(filter) || email.includes(filter)) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiZip - Best Image Compressor</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='optizip-favicon-style.png') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { sunny: '#FBBF24', darkyellow: '#D97706' }}}
+        }
+
+        function showToast(msg, type = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: msg,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        // FINAL LOGOUT — SAB KUCH SAFF + DIRECT /login
+        function logout() {
+            // Cookie clear
+            document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+            // localStorage clear
+            localStorage.clear();
+            
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.replace('/login'); // replace = back button se wapas nahi aayega
+            }, 800);
+        }
+
+        // YE PURI LINE DELETE KAR DI — YE HI VILLAIN THI!
+        // Pehle wali ye thi jo toast dikha rahi thi → ab bilkul nahi chalegi
+    </script>
+</head>
+<body class="bg-gray-50" style="background-color: #FEF7EE;">
+    {% block content %}{% endblock %}
+</body>
+</html>

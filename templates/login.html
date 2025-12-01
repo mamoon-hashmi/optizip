@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen px-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-sunny to-darkyellow rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bolt text-white"></i>
+                </div>
+                <h3 class="text-2xl font-black">OptiZip</h3>
+            </div>
+            <p class="text-gray-500 text-sm mt-2">Log in to compress unlimited images</p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+            <input type="email" name="email" placeholder="Email Address" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-sunny focus:outline-none text-sm">
+            <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-sunny focus:outline-none text-sm">
+            
+            <button type="submit" class="w-full relative bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-bold text-x px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
+                Log In
+            </button>
+        </form>
+
+        <div class="mt-6">
+            <a href="/auth/google" class="w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-sunny text-gray-700 font-medium py-3 rounded-lg transition text-sm">
+                <i class="fab fa-google text-red-500"></i>
+                Continue with Google
+            </a>
+        </div>
+
+        <p class="text-center mt-6 text-sm text-gray-600">
+            Don't have an account? 
+            <a href="/register" class="text-sunny font-semibold hover:underline">Register</a>
+        </p>
+    </div>
+</div>
+
+<script>
+document.getElementById('loginForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    const res = await fetch('/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if(res.ok) {
+        localStorage.setItem('access_token', json.access_token);
+        localStorage.setItem('name', json.name || 'User');
+        showToast('Login successful!', 'success');
+        setTimeout(() => window.location.href = '/dashboard', 1000);
+    } else {
+        showToast(json.msg || 'Login failed', 'error');
+    }
+};
+</script>
+{% endblock %}

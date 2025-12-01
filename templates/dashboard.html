@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header with Glassmorphism Effect -->
+        <div class="flex justify-between items-center mb-8 backdrop-blur-xl bg-white/80 p-5 rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-r from-sunny/5 to-darkyellow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sunny to-darkyellow rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-bolt text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-3xl font-black text-gray-800 tracking-tight">OptiZip</h1>
+                </div>
+                <p class="text-sm text-gray-600 flex items-center gap-2">
+                    <span class="inline-block w-1.5 h-1.5 bg-sunny rounded-full animate-pulse"></span>
+                    Credits remaining: 
+                    <span id="credits" class="font-black text-sunny text-lg tracking-tight bg-gradient-to-r from-sunny to-darkyellow bg-clip-text text-transparent">Loading...</span>
+                </p>
+            </div>
+            <button onclick="logout()" 
+                    class="relative bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl group/btn overflow-hidden">
+                <span class="absolute inset-0 bg-white/20 transform translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></span>
+                <span class="relative flex items-center gap-2">
+                    <i class="fas fa-sign-out-alt text-xs"></i> Logout
+                </span>
+            </button>
+        </div>
+
+        <!-- Upload Area with Modern Design -->
+        <div id="uploadArea" 
+             class="relative backdrop-blur-xl bg-white/90 border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-sunny hover:bg-yellow-50/50 transition-all duration-300 shadow-lg group/upload">
+            
+            <!-- Content -->
+            <div class="relative z-10">
+                <div class="relative inline-block mb-2">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-sunny"></i>
+                </div>
+                
+                <h2 class="text-base font-bold text-gray-800 mb-1">Drag & drop images here</h2>
+                <p class="text-xs text-gray-500 mb-3">or click to select <span class="text-sunny font-bold">(max 10 images)</span></p>
+                
+                <input type="file" multiple accept="image/*" id="imageInput" class="hidden">
+                
+                <button class="relative bg-gradient-to-r from-sunny to-darkyellow hover:from-darkyellow hover:to-sunny text-white font-bold text-xs px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
+                    <span class="relative flex items-center gap-2">
+                        <i class="fas fa-images text-xs"></i>
+                        Select Images
+                    </span>
+                </button>
+
+                <!-- Features Pills -->
+                <div class="flex justify-center gap-2 mt-3">
+                    <div class="px-2 py-1 bg-gray-50 rounded-full text-xs font-semibold text-gray-600 border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>WebP
+                    </div>
+                    <div class="px-2 py-1 bg-gray-50 rounded-full text-xs font-semibold text-gray-600 border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>Smart Compression
+                    </div>
+                    <div class="px-2 py-1 bg-gray-50 rounded-full text-xs font-semibold text-gray-600 border border-gray-200">
+                        <i class="fas fa-check-circle text-green-500 mr-1 text-xs"></i>Quality Preserved
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress with Enhanced Animation -->
+        <div id="progress" class="hidden text-center py-12">
+            <div class="relative inline-block">
+                <div class="absolute inset-0 bg-sunny/20 rounded-full blur-xl animate-pulse"></div>
+                <div class="relative inline-block animate-spin rounded-full h-16 w-16 border-4 border-gray-200">
+                    <div class="absolute inset-0 rounded-full border-4 border-t-sunny border-r-darkyellow border-b-transparent border-l-transparent"></div>
+                </div>
+            </div>
+            <p class="mt-4 text-lg font-black text-gray-800 tracking-tight">Optimizing your images...</p>
+            <p class="mt-2 text-xs text-gray-500 font-medium animate-pulse">Please wait while we work our magic ✨</p>
+        </div>
+
+        <!-- Results Grid with Enhanced Cards -->
+        <div id="results" class="mt-8 space-y-6"></div>
+    </div>
+</div>
+
+<script>
+// Toast notification
+function showToast(message, type = 'info') {
+    // Purana wala mast toast — bilkul waisa hi!
+    const toast = document.createElement('div');
+    toast.className = `fixed top-6 right-6 z-50 transform translate-x-full transition-all duration-500 ease-out`;
+    
+    const bgGradient = type === 'success' 
+        ? 'from-green-500 to-emerald-600' 
+        : type === 'error' 
+        ? 'from-red-500 to-rose-600' 
+        : 'from-sunny to-darkyellow';
+
+    toast.innerHTML = `
+        <div class="backdrop-blur-xl bg-white/20 border border-white/30 rounded-2xl shadow-2xl p-5 min-w-80">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br ${bgGradient} rounded-xl flex items-center justify-center shadow-lg">
+                    ${type === 'success' ? '<i class="fas fa-check text-back text-xl"></i>' : 
+                      type === 'error' ? '<i class="fas fa-times text-black text-xl"></i>' : 
+                      '<i class="fas fa-bolt text-black text-xl"></i>'}
+                </div>
+                <div class="flex-1">
+                    <p class="text-black font-bold text-lg tracking-tight">${message}</p>
+                    <p class="text-black/80 text-xs mt-1">OptiZip</p>
+                </div>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                        class="text-black/70 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mt-3 h-1 bg-white/30 rounded-full overflow-hidden">
+                <div class="h-full bg-white/80 rounded-full animate-shrink"></div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+}
+
+// FINAL getToken() — Cookie + localStorage dono check
+function getToken() {
+    const cookie = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+    if (cookie) {
+        const token = cookie.split('=')[1];
+        if (token && token.length > 10) return token;
+    }
+    const lsToken = localStorage.getItem('access_token');
+    if (lsToken && lsToken.length > 10) return lsToken;
+    return null;
+}
+
+// Credits update - Silent fail on 401
+async function updateCredits() {
+    const token = getToken();
+    if (!token) {
+        document.getElementById('credits').textContent = 'Not logged in';
+        return;
+    }
+    try {
+        const res = await fetch('/api/user', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById('credits').textContent = data.credits;
+        }
+    } catch (err) {
+        // Silent fail
+    }
+}
+
+// Logout - Clean system
+function logout() {
+    document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+    localStorage.clear();
+    showToast('Logged out successfully!', 'success');
+    setTimeout(() => {
+        window.location.replace('/login');
+    }, 1000);
+}
+
+// Page load pe credits update
+document.addEventListener('DOMContentLoaded', () => {
+    updateCredits();
+    setInterval(updateCredits, 20000);
+});
+
+// Upload & Drag Drop
+const uploadArea = document.getElementById('uploadArea');
+const imageInput = document.getElementById('imageInput');
+
+uploadArea.addEventListener('click', () => imageInput.click());
+imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+['dragover', 'dragenter'].forEach(evt => {
+    uploadArea.addEventListener(evt, e => {
+        e.preventDefault();
+        uploadArea.classList.add('border-sunny', 'scale-105');
+    });
+});
+['dragleave', 'drop'].forEach(evt => {
+    uploadArea.addEventListener(evt, e => {
+        e.preventDefault();
+        uploadArea.classList.remove('border-sunny', 'scale-105');
+    });
+});
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    handleFiles(e.dataTransfer.files);
+});
+
+// Handle Upload
+async function handleFiles(files) {
+    if (!files.length || files.length > 10) {
+        showToast('Please select 1-10 images', 'error');
+        return;
+    }
+
+    const token = getToken();
+    if (!token) {
+        showToast('Please login first', 'error');
+        setTimeout(() => window.location.href = '/login', 1000);
+        return;
+    }
+
+    document.getElementById('progress').classList.remove('hidden');
+    uploadArea.style.display = 'none';
+
+    const formData = new FormData();
+    for (let file of files) formData.append('images', file);
+
+    try {
+        const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            // Original filenames pass karo displayResults me
+            displayResults(data.results, files);
+            updateCredits();
+            showToast(data.msg || 'Images optimized!', 'success');
+        } else {
+            showToast(data.msg || 'Upload failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error', 'error');
+    } finally {
+        document.getElementById('progress').classList.add('hidden');
+        uploadArea.style.display = 'block';
+    }
+}
+
+// Human readable size - MB, KB, B automatically
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Display Results - Original filename use karega
+function displayResults(results, originalFiles) {
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+
+    results.forEach((r, index) => {
+        const originalFile = originalFiles[index];
+        const originalFileName = originalFile.name;
+        const nameWithoutExt = originalFileName.replace(/\.[^/.]+$/, "");
+        const extension = originalFileName.split('.').pop();
+        const downloadName = `${nameWithoutExt}_optizip.${extension}`;
+        
+const originalSize = formatBytes(r.original_size);
+const optimizedSize = formatBytes(r.optimized_size);
+
+        // Original image ka blob URL banao
+        const originalBlob = new Blob([new Uint8Array(atob(r.preview.split(',')[1])
+            .split('').map(c => c.charCodeAt(0)))], { type: 'image/webp' });
+        const originalURL = URL.createObjectURL(originalBlob);
+
+        const card = document.createElement('div');
+        card.className = 'opacity-0 transform translate-y-8';
+        card.innerHTML = `
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 border border-gray-100 hover:shadow-2xl">
+                
+                <!-- Image Comparison with Slider -->
+                <div class="relative h-64 bg-gray-100 overflow-hidden">
+                    <!-- Original Image (Background) -->
+                    <img src="${originalURL}" class="absolute inset-0 w-full h-full object-contain">
+                    
+                    <!-- Optimized Image (Foreground with clip) -->
+                    <div class="absolute inset-0 overflow-hidden" id="optimized-${index}" style="clip-path: inset(0 50% 0 0);">
+                        <img src="${r.preview}" class="absolute inset-0 w-full h-full object-contain">
+                    </div>
+                    
+                    <!-- Slider Control -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="relative w-full h-full">
+                            <input type="range" min="0" max="100" value="50" 
+                                   class="absolute top-1/2 left-0 w-full -translate-y-1/2 pointer-events-auto opacity-0 cursor-ew-resize z-20" 
+                                   id="slider-${index}">
+                            
+                            <!-- Visual Slider Line -->
+                            <div class="absolute top-0 bottom-0 w-1 bg-white shadow-2xl pointer-events-none z-10 transition-all duration-75" 
+                                 id="line-${index}" style="left: 50%;">
+                                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center">
+                                    <i class="fas fa-arrows-alt-h text-sunny text-xs"></i>
+                                </div>
+                                
+                                <!-- Labels -->
+                                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white px-2 py-1 rounded text-xs font-bold whitespace-nowrap backdrop-blur-sm">
+                                    Drag to Compare
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Corner Labels -->
+                    <div class="absolute top-2 left-2 bg-gray-800/80 text-white px-2 py-1 rounded text-xs font-bold backdrop-blur-sm">
+                        Original
+                    </div>
+                    <div class="absolute top-2 right-2 bg-green-600/80 text-white px-2 py-1 rounded text-xs font-bold backdrop-blur-sm">
+                        <i class="fas fa-check mr-1"></i>Optimized
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-3 p-4 bg-gray-50">
+                    <div class="text-center p-2 bg-white rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Original</p>
+                        <p class="text-lg font-black text-gray-800">${originalSize}</p>
+                    </div>
+                    <div class="text-center p-2 bg-green-50 rounded-lg border border-green-200">
+                        <p class="text-xs text-green-600 font-semibold uppercase tracking-wider mb-1">Optimized</p>
+                        <p class="text-lg font-black text-green-600">${optimizedSize}</p>
+                    </div>
+                </div>
+
+                <!-- Savings Badge -->
+                <div class="p-3 bg-gradient-to-r from-sunny via-yellow-400 to-darkyellow">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-white/30 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-white text-sm"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-white/80 text-xs font-bold uppercase tracking-wider">Saved</p>
+                                <p class="text-white text-xl font-black">${r.reduction_percent}%</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadWithOriginalName('/api/download/${r.filename}', '${downloadName}')"
+                                class="bg-white hover:bg-gray-50 text-sunny font-bold text-xs px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
+                            <i class="fas fa-download text-xs"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+
+        // Image Slider Functionality
+        const slider = document.getElementById(`slider-${index}`);
+        const line = document.getElementById(`line-${index}`);
+        const optimizedDiv = document.getElementById(`optimized-${index}`);
+
+        slider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            line.style.left = `${value}%`;
+            optimizedDiv.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+        });
+
+        // Staggered animation
+        setTimeout(() => {
+            card.style.transition = 'all 0.4s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 80);
+    });
+}
+
+// Download with original filename
+async function downloadWithOriginalName(url, customName) {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = customName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+        
+        showToast(`Downloading ${customName}`, 'success');
+    } catch (err) {
+        console.error('Download error:', err);
+        showToast('Download failed', 'error');
+    }
+}
+</script>
+{% endblock %}
