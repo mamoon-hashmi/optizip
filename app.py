@@ -10,6 +10,8 @@ import jwt
 from flask_cors import CORS   # ← Is line ko add kar
 
 
+#this is the main Flask app
+
 app = Flask(__name__)
 app.config['MONGO_URI'] = Config.MONGODB_URI
 app.config['SECRET_KEY'] = Config.JWT_SECRET_KEY
